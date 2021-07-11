@@ -51,10 +51,11 @@ app.post('/auth', (req, res) => {
     "client_id": "e7233ee8c8e4af846bda55aad3a6e99d9a2ff94e1e49c007f69320f647c55083",
     "client_secret": secret,
     "code": req.body.code,
-    "redirect_uri": "http://localhost:3000/login"
+    "redirect_uri": "https://42gag.netlify.app/login"
   }).then((data) => {
     res.send(data.data);
-  }).catch(() => {
+  }).catch((e) => {
+    console.log(e);
     res.sendStatus(400);
   });
 });
