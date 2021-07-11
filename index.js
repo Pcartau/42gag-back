@@ -5,8 +5,8 @@ const bodyParser = require('body-parser')
 const app = express();
 const port = process.env.PORT || 3000;
 const { verifyToken, getUserInfos, postNewImage, getLatestImages, likeImage } = require('./src/functions');
-const secret = process.ENV.SECRET;
-const mongoKey = process.ENV.MONGO;
+const secret = process.env.SECRET;
+const mongoKey = process.env.MONGO;
 
 
 mongoose.connect(`mongodb+srv://pcartau:${mongoKey}@cluster0.ro61w.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`, {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true});
