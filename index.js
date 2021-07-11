@@ -55,7 +55,6 @@ app.post('/auth', (req, res) => {
   }).then((data) => {
     res.send(data.data);
   }).catch((e) => {
-    console.log(e);
     res.sendStatus(400);
   });
 });
