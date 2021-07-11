@@ -8,6 +8,11 @@ const ImageSchema = new Schema({
   },
   userImg: String,
   userUrl: String,
+  likes: Array,
+  likesNumber: {
+    type: Number,
+    index: true
+  },
   title: {
     type: String,
     index: true,

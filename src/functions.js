@@ -19,14 +19,15 @@ function getUserInfos(token) {
 }
 
 function postNewImage(body) {
-  const { username, userImg, userUrl, title, base64 } = body;
+  const { username, userImg, userUrl, title, base64, likes, likesNumber } = body;
 
   new Image({
     username,
     userImg,
     userUrl,
     title,
-    base64
+    base64,
+    likesNumber
   }).save((err) => {
     if (err) throw new Error(err);
   });
@@ -43,5 +44,16 @@ async function getLatestImages(page=0) {
   return images;
 }
 
+async function likeImage(login, image_id) {
+  const image = await Image.findById(image_id);
 
-module.exports = { verifyToken, getUserInfos, postNewImage, getLatestImages };
+  if (!image.likes.includes(login)) {
+    image.likes.push(login);
+    image.likesNumber += 1;
+    await image.save();
+  }
+  return true;
+}
+
+
+module.exports = { verifyToken, getUserInfos, postNewImage, getLatestImages, likeImage };

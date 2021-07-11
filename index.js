@@ -4,7 +4,7 @@ const axios = require('axios');
 const bodyParser = require('body-parser')
 const app = express();
 const port = process.env.PORT || 3000;
-const { verifyToken, getUserInfos, postNewImage, getLatestImages } = require('./src/functions');
+const { verifyToken, getUserInfos, postNewImage, getLatestImages, likeImage } = require('./src/functions');
 const secret = 'f2e69704ea9d781489a7b6796b571c804ca9173e2ad4350fa02d306bb7c1afa7';
 
 
@@ -17,10 +17,14 @@ db.once('open', function() {
 });
 
 
-const publicRoutes = ['/login'];
+const publicRoutes = ['/auth'];
 
+app.use(express.json({limit: '1mb'}));
+app.use(express.urlencoded({limit: '1mb'}));
 app.use(bodyParser.json());
 app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   if (publicRoutes.includes(req.path)) {
     return next();
   }
@@ -44,7 +48,7 @@ app.post('/auth', (req, res) => {
     "client_id": "e7233ee8c8e4af846bda55aad3a6e99d9a2ff94e1e49c007f69320f647c55083",
     "client_secret": secret,
     "code": req.body.code,
-    "redirect_uri": "http://localhost:3000"
+    "redirect_uri": "http://localhost:3000/login"
   }).then((data) => {
     res.send(data.data);
   }).catch(() => {
@@ -62,17 +66,28 @@ app.get('/homepage/:page', async(req, res) => {
 
 app.post('/image', async(req, res) => {
   const userData = await getUserInfos(req.headers.authorization);
+  const title = req.body.title;
   
+  title.length = 100;
   postNewImage({
-    username: userData.login,
-    userImg: userData.image_url,
-    userUrl: userData.url,
+    username: req.body.hidden ? 'anonym' : userData.login,
+    userImg: req.body.hidden ? 'https://www.cregybad.org/wp-content/uploads/2017/10/user.png' : userData.image_url,
+    userUrl: req.body.hidden ? 'https://profile.intra.42.fr/users/norminet' : `https://profile.intra.42.fr/users/${userData.login}`,
     title: req.body.title,
     base64: req.body.base64,
-  }).catch(() => res.sendStatus(500));
+    likes: [],
+    likesNumber: 0,
+  });
 
   res.sendStatus(200);
 });
 
+
+app.post('/like/:image_id', async(req, res) => {
+  const userData = await getUserInfos(req.headers.authorization);
+
+  await likeImage(userData.login, req.params.image_id);
+  res.sendStatus(200);
+});
 
 app.listen(port);
