@@ -37,8 +37,8 @@ async function getLatestImages(page=0) {
   const skip = page * 5;
   const images = await Image.find()
     .sort([['createdAt', -1]])
-    // .skip(skip)
-    // .limit(10)
+    .skip(skip)
+    .limit(10)
     .exec();
 
   return images;
