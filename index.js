@@ -5,7 +5,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser')
 const app = express();
 const port = process.env.PORT || 3000;
-const { verifyToken, getUserInfos, postNewImage, getLatestImages, likeImage } = require('./src/functions');
+const { verifyToken, getUserInfos, postNewImage, getImages, likeImage } = require('./src/functions');
 const secret = process.env.SECRET;
 const mongoKey = process.env.MONGO;
 
@@ -62,8 +62,8 @@ app.post('/auth', (req, res) => {
 });
 
 
-app.get('/homepage/:page', async(req, res) => {
-  const images = await getLatestImages(req.params.page);
+app.get('/homepage/:page/:mode', async(req, res) => {
+  const images = await getImages(req.params.page, req.params.mode);
 
   res.send(images);
 });

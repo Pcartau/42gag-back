@@ -33,10 +33,10 @@ function postNewImage(body) {
   });
 }
 
-async function getLatestImages(page=0) {
+async function getImages(page=0, mode='latest') {
   const skip = page * 10;
   const images = await Image.find()
-    .sort([['createdAt', -1]])
+    .sort(mode === 'latest' ? [['createdAt', -1]] : {'likesNumber' : 'desc'})
     .skip(skip)
     .limit(10)
     .exec();
@@ -56,4 +56,4 @@ async function likeImage(login, image_id) {
 }
 
 
-module.exports = { verifyToken, getUserInfos, postNewImage, getLatestImages, likeImage };
+module.exports = { verifyToken, getUserInfos, postNewImage, getImages, likeImage };
